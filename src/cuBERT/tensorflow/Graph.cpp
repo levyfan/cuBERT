@@ -87,7 +87,8 @@ namespace cuBERT {
                   << ";type_vocab_size=" << type_vocab_size
                   << ";hidden_size=" << hidden_size
                   << ";intermediate_size=" << intermediate_size
-                  << ";num_labels=}" << num_labels << std::endl;
+                  << ";num_labels=" << num_labels
+                  << "}" << std::endl;
     }
 
     template <typename T>
