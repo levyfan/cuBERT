@@ -34,12 +34,18 @@ function(RELATIVE_PROTOBUF_GENERATE_CPP SRCS HDRS ROOT_DIR)
         list(APPEND ${SRCS} "${CMAKE_CURRENT_BINARY_DIR}/${REL_DIR}/${FIL_WE}.pb-c.c")
         list(APPEND ${HDRS} "${CMAKE_CURRENT_BINARY_DIR}/${REL_DIR}/${FIL_WE}.pb-c.h")
 
+        if(cuBERT_SYSTEM_PROTOBUF)
+            set(GEN_DEP ${ABS_FIL})
+        else()
+            set(GEN_DEP ${ABS_FIL} protobuf-c)
+        endif()
+
         add_custom_command(
                 OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${REL_DIR}/${FIL_WE}.pb-c.c"
                 "${CMAKE_CURRENT_BINARY_DIR}/${REL_DIR}/${FIL_WE}.pb-c.h"
                 COMMAND  ${protobuf-c_PROTOC_EXECUTABLE}
                 ARGS --c_out  ${CMAKE_CURRENT_BINARY_DIR} -I ${ROOT_DIR} ${ABS_FIL} -I ${protobuf-c_INCLUDE_DIRS}
-                DEPENDS ${ABS_FIL} protobuf-c
+                DEPENDS ${GEN_DEP}
                 COMMENT "Running C protocol buffer compiler on ${FIL}"
                 VERBATIM )
     endforeach()

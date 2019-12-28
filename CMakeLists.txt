@@ -9,6 +9,7 @@ add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
 option(cuBERT_ENABLE_GPU "Enable GPU support" OFF)
 option(cuBERT_ENABLE_MKL_SUPPORT "Enable Intel MKL support" OFF)
+option(cuBERT_SYSTEM_PROTOBUF "Use system Protobuf and Protobuf-c" OFF)
 
 find_package(Threads REQUIRED)
 
@@ -21,19 +22,25 @@ if (OPENMP_FOUND)
 endif()
 
 include(cub)
-include(protobuf)
-include(protobuf-c)
 include(utf8proc)
+include(googletest)
+
+set(cuBERT_EXTERNAL_DEPENDENCIES
+        cub
+        utf8proc
+        googletest)
+
+if(cuBERT_SYSTEM_PROTOBUF)
+    find_package(protobuf-c REQUIRED)
+else()
+    include(protobuf)
+    include(protobuf-c)
+    list(APPEND cuBERT_EXTERNAL_DEPENDENCIES protobuf protobuf-c)
+endif()
 
 set(cuBERT_EXTERNAL_LIBRARIES
         ${protobuf-c_STATIC_LIBRARIES}
         ${utf8proc_STATIC_LIBRARIES})
-set(cuBERT_EXTERNAL_DEPENDENCIES
-        cub
-        protobuf
-        protobuf-c
-        utf8proc
-        googletest)
 
 include_directories(
         # Source and generated code.
@@ -127,7 +134,6 @@ endif ()
 
 enable_testing()
 configure_file(test_vocab.txt ${CMAKE_CURRENT_BINARY_DIR}/test_vocab.txt COPYONLY)
-include(googletest)
 add_executable(cuBERT_test test/unit_test.cpp
         test/cuBERT/common_test.cpp
         test/cuBERT/tokenization_test.cpp

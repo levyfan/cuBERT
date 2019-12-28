@@ -37,21 +37,18 @@ namespace cuBERT {
     private:
         void* cublas;
 
+        size_t max_batch_size;
         size_t seq_length;
         size_t num_attention_heads;
         size_t size_per_head;
 
-        Dense<T> *query_layer;
-        Dense<T> *key_layer;
-        Dense<T> *value_layer;
+        DenseQKV<T> *qkv_layer;
         Softmax<T> *softmax;
         Att_Q_K<T> *bqk;
         Att_QK_V<T> *bqkv;
 
         // cpu/gpu buffers
-        T *query_layer_out;
-        T *key_layer_out;
-        T *value_layer_out;
+        T *qkv_layer_out;
         T *attention_scores;
 
         // output
